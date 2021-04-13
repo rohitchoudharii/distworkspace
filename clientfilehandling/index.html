@@ -1,0 +1,92 @@
+<html>
+
+<body>
+    <script src = "./js/test.js"></script>
+    <textarea id="editor" onkeyup="local_file_saver()"></textarea>
+    <div id = "root" ><button onclick = "folder_collapse('root')">root</button></div>  
+    <form action="/try/index.php">
+        <input type="text" , name="val">
+        <button type="submit"> submit </button>
+    </form>
+    <script type="text/javascript">
+        let current_file = ""
+        let hir = {}
+        let file_content = {}
+        let root = "123456"
+        let project_name = "test" 
+        let branch = "user1"
+        let server = "http://fileserver.distworkspace.com"
+        </script>
+        <script>
+            current_file = ""
+            root_hir = "timestamp"
+            
+    load_json(str)
+    load_hir(hir,file_content)
+            function load_json(json_str){
+                console.log(json_str)
+                hir = JSON.parse(json_str);
+            }
+            
+            
+            function rec_helper(path,hir_files,parent_div,file_data){
+        // This is an important function, if you would to add any sort of attribute in the element, it can be done from here
+        for(i in hir_files){
+            if(i=="files"){
+                // attribute for the file can be fone from here
+                for(j in hir_files.files){
+                    var para = document.createElement("div");        
+                    para.innerText = hir_files.files[j];           
+                    file_data[path+hir_files.files[j]] = {content:"",save:0};
+                    para.setAttribute("ondblclick","on_file_click('"+path+hir_files.files[j]+"')")
+                    parent_div.appendChild(para);  
+                }
+            }else{
+                // attribute for the folder can be done from here
+                var sub_folder = document.createElement("div");  
+                var sub_folder_name = document.createElement("div");  
+                var collapse_btn = document.createElement("button");  
+                var create_file_btn = document.createElement("button");  
+                var create_dir_btn = document.createElement("button");  
+                var delete_dir_btn = document.createElement("button");  
+    
+                collapse_btn.innerHTML = i
+                collapse_btn.setAttribute("onclick","folder_collapse('"+path+i+"')")
+    
+                create_file_btn.innerHTML = "CF"
+                create_file_btn.setAttribute("onclick","create_file('"+path+i+"')")
+    
+                create_dir_btn.innerHTML = "CD"
+                create_dir_btn.setAttribute("onclick","create_dir('"+path+i+"')")
+    
+                delete_dir_btn.innerHTML = "DF"
+                delete_dir_btn.setAttribute("onclick","delete_dir('"+path+i+"')")
+                sub_folder_name.appendChild(collapse_btn)
+                sub_folder_name.appendChild(create_file_btn)
+                sub_folder_name.appendChild(create_dir_btn)
+                sub_folder_name.appendChild(delete_dir_btn)
+    
+                sub_folder.setAttribute("id",path+i)
+                sub_folder.appendChild(sub_folder_name)
+                parent_div.appendChild(sub_folder)
+                rec_helper(path+i+"/", hir_files[i], sub_folder,file_data)
+            }
+        }
+    }
+            function local_file_saver(path){
+                current_file = path
+                console.log(path)
+                if(file_content[current_file].content == ""){
+                    fetch_file(path)
+                    file_content[current_file].content = "  "
+                }else{
+                    document.getElementById("editor").value = file_content[current_file]
+                }
+            }
+            function fetch_file(path){
+                console.log("Request sent to root folder"+root_hir+"file name:"+path)
+            }
+        </script>
+</body>
+</html>
+
